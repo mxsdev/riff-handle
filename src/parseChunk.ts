@@ -1,6 +1,4 @@
-import fs from 'fs'
-import type { Readable } from 'stream'
-import type { WaveADTL, WaveADTLFile, WaveADTLLTxt, WaveADTLLabel, WaveADTLNote, WaveCue, WaveCues, WaveFormat, WaveMeta, ChunkMeta } from '../types/chunks'
+import type { WaveADTL, WaveADTLFile, WaveADTLLTxt, WaveADTLLabel, WaveADTLNote, WaveCues, WaveFormat, ChunkMeta } from '../types/chunks'
 import { ChunkReader } from './chunkReader';
 
 export function parseChunkHeader(header: Buffer): ChunkMeta {
