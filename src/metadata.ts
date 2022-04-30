@@ -1,0 +1,50 @@
+import { WaveADTL, WaveCues, WaveFormat, WaveMeta } from "../types/chunks";
+import { ParseWave } from "./parseChunk";
+import { BufferHandle, InvalidRIFFFileFormatError, RIFFReader } from "./riffReader";
+
+/**
+ * Retrieves the metadata from a wave file
+ * without loading its data into memory
+ * 
+ * @param handle 
+ * @param size 
+ * @returns 
+ */
+export async function getWaveMeta(handle: BufferHandle, size: number): Promise<WaveMeta> {
+    let fmt: WaveFormat|undefined = undefined
+    let cue: WaveCues = []
+    let adtl: WaveADTL = []
+
+    const riffReader = new RIFFReader(handle, size)
+
+    const {file_type} = await riffReader.init()
+
+    if(file_type !== 'WAVE') {
+        throw new InvalidRIFFFileFormatError('File must be of WAVE type')
+    }
+
+    while(!riffReader.eol()) {
+        const [ ckID, ckSize ] = await riffReader.nextChunk()
+
+        if(ckID === 'fmt ') {
+            const buff = await riffReader.readCurrentChunk()
+            fmt = ParseWave.parseFormatChunk(buff)
+        } else if(ckID === 'cue ') {
+            const buff = await riffReader.readCurrentChunk()
+            cue = ParseWave.parseCueChunk(buff)
+        } else if(ckID === 'LIST') {
+            const meta = await riffReader.getChunkMeta()
+
+            if(meta.type === 'list' && meta.list_type === 'adtl') {
+                const buff = await riffReader.readCurrentChunk()
+                adtl = ParseWave.ADTL.parseWaveADTLChunk(buff)
+            }
+        }
+
+        if(riffReader.chunkLoaded()) riffReader.skipCurrentChunk()
+    }
+
+    if(!fmt) throw new Error('fmt chunk missing from wave file')
+
+    return { fmt, cue, adtl }
+}
