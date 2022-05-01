@@ -30,6 +30,7 @@ describe('getWaveMeta', () => {
 
         assert.deepStrictEqual(meta['fmt'], test_wave_meta['fmt'])
         assert.deepStrictEqual(meta['cue'], test_wave_meta['cue'])
+        assert.deepStrictEqual(meta['info'], test_wave_meta['info'])
 
         // we must skip the second index here since it conains a Buffer
 

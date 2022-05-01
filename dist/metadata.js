@@ -25,6 +25,7 @@ function getWaveMeta(handle, size) {
         let fmt = undefined;
         let cue = [];
         let adtl = [];
+        let info = {};
         const riffReader = new riffReader_1.RIFFReader(handle, size);
         const { file_type } = yield riffReader.init();
         if (file_type !== 'WAVE') {
@@ -42,9 +43,15 @@ function getWaveMeta(handle, size) {
             }
             else if (ckID === 'LIST') {
                 const meta = yield riffReader.getChunkMeta();
-                if (meta.type === 'list' && meta.list_type === 'adtl') {
-                    const buff = yield riffReader.readCurrentChunk();
-                    adtl = parseChunk_1.ParseWave.ADTL.parseWaveADTLChunk(buff);
+                if (meta.type === 'list') {
+                    if (meta.list_type === 'adtl') {
+                        const buff = yield riffReader.readCurrentChunk();
+                        adtl = parseChunk_1.ParseWave.ADTL.parseWaveADTLChunk(buff);
+                    }
+                    else if (meta.list_type === 'INFO') {
+                        const buff = yield riffReader.readCurrentChunk();
+                        info = yield parseChunk_1.ParseWave.parseWaveInfoChunk(buff);
+                    }
                 }
             }
             if (riffReader.chunkLoaded())
@@ -52,7 +59,7 @@ function getWaveMeta(handle, size) {
         }
         if (!fmt)
             throw new Error('fmt chunk missing from wave file');
-        return { fmt, cue, adtl };
+        return { fmt, cue, adtl, info };
     });
 }
 exports.getWaveMeta = getWaveMeta;

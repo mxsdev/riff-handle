@@ -23,7 +23,8 @@ export type WaveCues = WaveCue[]
 export type WaveMeta = {
     fmt: WaveFormat,
     cue: WaveCues,
-    adtl: WaveADTL
+    adtl: WaveADTL,
+    info: WaveInfo
 }
 
 export type WaveADTLLabel = {
@@ -58,3 +59,5 @@ export type WaveADTLFile = {
 }
 
 export type WaveADTL = (WaveADTLLabel|WaveADTLLTxt|WaveADTLNote|WaveADTLFile)[]
+
+export type WaveInfo = { [type: string]: string }

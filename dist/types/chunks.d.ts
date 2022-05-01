@@ -21,6 +21,7 @@ export declare type WaveMeta = {
     fmt: WaveFormat;
     cue: WaveCues;
     adtl: WaveADTL;
+    info: WaveInfo;
 };
 export declare type WaveADTLLabel = {
     type: 'labl';
@@ -50,3 +51,6 @@ export declare type WaveADTLFile = {
     fileData: Buffer;
 };
 export declare type WaveADTL = (WaveADTLLabel | WaveADTLLTxt | WaveADTLNote | WaveADTLFile)[];
+export declare type WaveInfo = {
+    [type: string]: string;
+};
