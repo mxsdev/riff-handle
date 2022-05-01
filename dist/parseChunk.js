@@ -40,7 +40,7 @@ var ParseWave;
         return cues;
     }
     ParseWave.parseCueChunk = parseCueChunk;
-    function parseWaveInfoChunk(chunk) {
+    function parseInfoChunk(chunk) {
         const reader = new chunkReader_1.ChunkReader(chunk);
         const info = {};
         const list_type = reader.readFCC();
@@ -51,7 +51,13 @@ var ParseWave;
         }
         return info;
     }
-    ParseWave.parseWaveInfoChunk = parseWaveInfoChunk;
+    ParseWave.parseInfoChunk = parseInfoChunk;
+    function parseFactChunk(chunk) {
+        const reader = new chunkReader_1.ChunkReader(chunk);
+        const dwFileSize = reader.readDWord();
+        return { numSamples: dwFileSize };
+    }
+    ParseWave.parseFactChunk = parseFactChunk;
     let ADTL;
     (function (ADTL) {
         function parseWaveADTLChunk(chunk) {

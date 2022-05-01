@@ -24,7 +24,8 @@ export type WaveMeta = {
     fmt: WaveFormat,
     cue: WaveCues,
     adtl: WaveADTL,
-    info: WaveInfo
+    info: WaveInfo,
+    fact?: WaveFact
 }
 
 export type WaveADTLLabel = {
@@ -61,3 +62,5 @@ export type WaveADTLFile = {
 export type WaveADTL = (WaveADTLLabel|WaveADTLLTxt|WaveADTLNote|WaveADTLFile)[]
 
 export type WaveInfo = { [type: string]: string }
+
+export type WaveFact = { numSamples: number }

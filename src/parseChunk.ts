@@ -1,4 +1,4 @@
-import type { WaveADTL, WaveADTLFile, WaveADTLLTxt, WaveADTLLabel, WaveADTLNote, WaveCues, WaveFormat, ChunkMeta, WaveInfo } from './types/chunks'
+import type { WaveADTL, WaveADTLFile, WaveADTLLTxt, WaveADTLLabel, WaveADTLNote, WaveCues, WaveFormat, ChunkMeta, WaveInfo, WaveFact } from './types/chunks'
 import { ChunkReader } from './chunkReader';
 
 export function parseChunkHeader(header: Buffer): ChunkMeta {
@@ -46,7 +46,7 @@ export namespace ParseWave {
         return cues
     }
     
-    export function parseWaveInfoChunk(chunk: Buffer): WaveInfo {
+    export function parseInfoChunk(chunk: Buffer): WaveInfo {
         const reader = new ChunkReader(chunk)
         const info: WaveInfo = { }
 
@@ -60,6 +60,14 @@ export namespace ParseWave {
         }
 
         return info
+    }
+
+    export function parseFactChunk(chunk: Buffer): WaveFact {
+        const reader = new ChunkReader(chunk)
+
+        const dwFileSize = reader.readDWord()
+
+        return { numSamples: dwFileSize }
     }
 
     export namespace ADTL {

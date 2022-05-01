@@ -4,6 +4,7 @@ import path from 'path'
 import { } from '../src/parseChunk'
 import { RIFFReader, getWaveMeta } from '../'
 import { test_wave_meta } from './snapshot'
+import { WaveMeta } from '../dist/types/chunks'
 
 const test_wav = path.join(__dirname, 'files', 'test.wav')
 
@@ -28,9 +29,12 @@ describe('getWaveMeta', () => {
 
         const meta = await getWaveMeta(handle, size)
 
-        assert.deepStrictEqual(meta['fmt'], test_wave_meta['fmt'])
-        assert.deepStrictEqual(meta['cue'], test_wave_meta['cue'])
-        assert.deepStrictEqual(meta['info'], test_wave_meta['info'])
+        for(const key of Object.keys(meta)) {
+            if(key === 'adtl') continue
+
+            // @ts-ignore
+            assert.deepStrictEqual(meta[key], test_wave_meta[key])
+        }
 
         // we must skip the second index here since it conains a Buffer
 

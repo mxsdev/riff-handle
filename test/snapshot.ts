@@ -40,5 +40,6 @@ export const test_wave_meta = {
       },
       { type: 'labl', id: 2, data: 'marker' }
     ],
-    info: { ICMT: 'Recorded on 29-4-22 in Edison.', ISFT: 'Edison' }
+    info: { ICMT: 'Recorded on 29-4-22 in Edison.', ISFT: 'Edison' },
+    fact: { numSamples: 19054 }
   }

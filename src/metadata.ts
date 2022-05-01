@@ -1,4 +1,4 @@
-import { WaveADTL, WaveCues, WaveFormat, WaveInfo, WaveMeta } from "./types/chunks";
+import { WaveADTL, WaveCues, WaveFact, WaveFormat, WaveInfo, WaveMeta } from "./types/chunks";
 import { ParseWave } from "./parseChunk";
 import { BufferHandle, InvalidRIFFFileFormatError, RIFFReader } from "./riffReader";
 
@@ -15,6 +15,7 @@ export async function getWaveMeta(handle: BufferHandle, size: number): Promise<W
     let cue: WaveCues = []
     let adtl: WaveADTL = []
     let info: WaveInfo = {}
+    let fact: WaveFact|undefined = undefined
 
     const riffReader = new RIFFReader(handle, size)
 
@@ -33,6 +34,9 @@ export async function getWaveMeta(handle: BufferHandle, size: number): Promise<W
         } else if(ckID === 'cue ') {
             const buff = await riffReader.readCurrentChunk()
             cue = ParseWave.parseCueChunk(buff)
+        } else if(ckID === 'fact') {
+            const buff = await riffReader.readCurrentChunk()
+            fact = ParseWave.parseFactChunk(buff)
         } else if(ckID === 'LIST') {
             const meta = await riffReader.getChunkMeta()
 
@@ -42,7 +46,7 @@ export async function getWaveMeta(handle: BufferHandle, size: number): Promise<W
                     adtl = ParseWave.ADTL.parseWaveADTLChunk(buff)
                 }else if(meta.list_type === 'INFO') {
                     const buff = await riffReader.readCurrentChunk()
-                    info = await ParseWave.parseWaveInfoChunk(buff)
+                    info = await ParseWave.parseInfoChunk(buff)
                 }
                 
             }
@@ -53,5 +57,5 @@ export async function getWaveMeta(handle: BufferHandle, size: number): Promise<W
 
     if(!fmt) throw new Error('fmt chunk missing from wave file')
 
-    return { fmt, cue, adtl, info }
+    return { fmt, cue, adtl, info, fact }
 }
