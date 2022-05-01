@@ -1,5 +1,5 @@
-import { ChunkMeta } from "../types/chunks"
-import { RIFFMeta } from "../types/riff"
+import { ChunkMeta } from "./types/chunks"
+import { RIFFMeta } from "./types/riff"
 import { ChunkReader } from "./chunkReader"
 import { parseChunkHeader } from "./parseChunk"
 

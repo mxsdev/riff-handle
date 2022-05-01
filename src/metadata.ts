@@ -1,4 +1,4 @@
-import { WaveADTL, WaveCues, WaveFormat, WaveMeta } from "../types/chunks";
+import { WaveADTL, WaveCues, WaveFormat, WaveMeta } from "./types/chunks";
 import { ParseWave } from "./parseChunk";
 import { BufferHandle, InvalidRIFFFileFormatError, RIFFReader } from "./riffReader";
 

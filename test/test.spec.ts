@@ -1,11 +1,9 @@
 import { assert } from 'chai'
 import fs from 'fs/promises'
 import path from 'path'
-import { getWaveMeta } from '../src/metadata'
 import { } from '../src/parseChunk'
-import { RIFFReader } from '../src/riffReader'
+import { RIFFReader, getWaveMeta } from '../'
 import { test_wave_meta } from './snapshot'
-// import { parseChunk } from '../src/parse'
 
 const test_wav = path.join(__dirname, 'files', 'test.wav')
 

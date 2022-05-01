@@ -1,11 +1,15 @@
 {
-  "name": "riff-stream",
+  "name": "riff-data",
   "version": "0.0.1",
-  "description": "Selectively parse riff data from a byte stream",
-  "main": "index.js",
+  "description": "Selectively parse riff data from a file handle",
+  "main": "./dist/index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build": "tsc"
   },
+  "files": [
+    "dist/"
+  ],
   "author": "Max Stoumen",
   "license": "MIT",
   "dependencies": {},

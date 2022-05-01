@@ -1,4 +1,4 @@
-import type { WaveADTL, WaveADTLFile, WaveADTLLTxt, WaveADTLLabel, WaveADTLNote, WaveCues, WaveFormat, ChunkMeta } from '../types/chunks'
+import type { WaveADTL, WaveADTLFile, WaveADTLLTxt, WaveADTLLabel, WaveADTLNote, WaveCues, WaveFormat, ChunkMeta } from './types/chunks'
 import { ChunkReader } from './chunkReader';
 
 export function parseChunkHeader(header: Buffer): ChunkMeta {
