@@ -4,8 +4,8 @@ export const test_wave_meta = {
       channels: 2,
       samplesPerSec: 44100,
       avgBytesPerSec: 352800,
-      blockAlign: 2097160,
-      bitsPerSample: undefined
+      blockAlign: 8,
+      bitsPerSample: 32
     },
     cue: [
       {

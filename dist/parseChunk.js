@@ -19,7 +19,7 @@ var ParseWave;
         const channels = reader.readWord();
         const samplesPerSec = reader.readDWord();
         const avgBytesPerSec = reader.readDWord();
-        const blockAlign = reader.readDWord();
+        const blockAlign = reader.readWord();
         const bitsPerSample = (reader.remaining() >= 2) ? reader.readWord() : undefined;
         return { formatTag, channels, samplesPerSec, avgBytesPerSec, blockAlign, bitsPerSample };
     }
