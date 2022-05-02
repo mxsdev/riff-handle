@@ -1,12 +1,11 @@
 import { assert } from 'chai'
 import fs from 'fs/promises'
 import path from 'path'
-import { } from '../src/parseChunk'
-import { RIFFReader, getWaveMeta } from '../'
+import { RIFFReader, getWaveMeta, getSampleRange, WaveWriter } from '../dist/index'
 import { test_wave_meta } from './snapshot'
-import { WaveMeta } from '../dist/types/chunks'
 
 const test_wav = path.join(__dirname, 'files', 'test.wav')
+const test_trimmed_wav = path.join(__dirname, 'files', 'test_trim.wav')
 
 describe('RIFFReader', async () => {
     it('evaluates file size and type', async () => {
@@ -42,6 +41,32 @@ describe('getWaveMeta', () => {
         assert.deepStrictEqual(meta['adtl'][0], test_wave_meta['adtl'][0])
         // @ts-ignore
         assert.deepStrictEqual(meta['adtl'][2], test_wave_meta['adtl'][2])
+
+        await handle.close()
+    })
+})
+
+describe('getSampleRange', () => {
+    it('returns proper byte array', async () => {
+        // Write file
+        const handle = await fs.open(test_wav, 'r')
+        const size = (await handle.stat()).size
+
+        const meta = await getWaveMeta(handle, size)
+
+        const cue = meta.cue.find(p => p.id === 1)
+        const len = meta.adtl.find(p => p.id === 1 && p.type === 'ltxt')
+
+        if(!cue || len?.type !== 'ltxt') throw new Error('cue point not found')
+
+        // @ts-ignore
+        const buff = await getSampleRange(handle, size, cue.position, len.sampleLength)
+
+        const wave = new WaveWriter(meta.fmt, meta.fact, buff).setTag('ICMT', 'This is a test comment.')
+
+        // check snapshot
+        const snapshot = await fs.readFile(test_trimmed_wav)
+        assert.deepStrictEqual(snapshot, wave.toBuffer())
 
         await handle.close()
     })

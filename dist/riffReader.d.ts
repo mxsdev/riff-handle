@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { ChunkMeta } from "./types/chunks";
 import { RIFFMeta } from "./types/riff";
+import { WaveData } from "./types/data";
 /**
  * Abstraction of fs.FileHandle
  *
@@ -37,7 +38,7 @@ export declare class RIFFReader {
      * @param size
      * @param start
      */
-    constructor(handle: BufferHandle, size: number, start?: number);
+    constructor(handle: BufferHandle, size: number, start?: number, initialized?: boolean);
     init(): Promise<RIFFMeta>;
     eol(): boolean;
     remaining(): number;
@@ -55,5 +56,7 @@ export declare class RIFFReader {
     readCurrentChunk(): Promise<Buffer>;
     skipCurrentChunk(): Promise<void>;
     private discardCurrentChunk;
+    isSampleDataChunk(): Promise<'data' | 'list' | false>;
+    getSampleRange(position: number, length: number, sampleSize: number): Promise<WaveData>;
 }
 export {};

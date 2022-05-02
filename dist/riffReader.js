@@ -42,12 +42,13 @@ class RIFFReader {
      * @param size
      * @param start
      */
-    constructor(handle, size, start = 0) {
+    constructor(handle, size, start = 0, initialized = false) {
         this.initialized = false;
         this.chunk = null;
         this.pos = start;
         this.handle = handle;
         this.size = size;
+        this.initialized = initialized;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -85,23 +86,23 @@ class RIFFReader {
     advance(by) {
         this.pos += by;
     }
-    _read(buffer, num_bytes, advance = false) {
+    _read(buffer, num_bytes, advance = false, offset = 0) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.remaining() < num_bytes) {
                 throw new RIFFFileEOLError('Attempted to read beyond end of line');
             }
-            const { bytesRead } = yield this.handle.read(buffer, 0, num_bytes, this.pos);
+            const { bytesRead } = yield this.handle.read(buffer, 0, num_bytes, this.pos + offset);
             if (advance)
                 this.advance(num_bytes);
             return bytesRead;
         });
     }
-    read(num_bytes, advance = true, force = false) {
+    read(num_bytes, advance = true, force = false, offset = 0) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!force && !this.initialized)
                 throw new Error('Cannot read from riff file without running init()!');
             const buffer = Buffer.alloc(num_bytes);
-            const res = yield this._read(buffer, num_bytes, advance);
+            const res = yield this._read(buffer, num_bytes, advance, offset);
             return buffer;
         });
     }
@@ -161,6 +162,36 @@ class RIFFReader {
     }
     discardCurrentChunk() {
         this.chunk = null;
+    }
+    isSampleDataChunk() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.chunkLoaded())
+                return false;
+            const isDataChunk = (this.chunk)[0] === 'data';
+            if (isDataChunk)
+                return 'data';
+            const meta = yield this.getChunkMeta();
+            if (meta.type === 'list' && meta.list_type === 'wavl')
+                return 'list';
+            return false;
+        });
+    }
+    getSampleRange(position, length, sampleSize) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sampleChunkType = yield this.isSampleDataChunk();
+            if (!sampleChunkType)
+                throw new Error('Sample data chunk not active!');
+            const res = [];
+            if (sampleChunkType === 'data') {
+                const buff = yield this.read(length * sampleSize, false, false, position * sampleSize);
+                res.push({ type: 'data', data: buff });
+            }
+            else if (sampleChunkType === 'list') {
+                // TODO: implement list data type
+                throw new Error('WAVE data format unsupported');
+            }
+            return res;
+        });
     }
 }
 exports.RIFFReader = RIFFReader;

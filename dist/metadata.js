@@ -55,7 +55,7 @@ function getWaveMeta(handle, size) {
                     }
                     else if (meta.list_type === 'INFO') {
                         const buff = yield riffReader.readCurrentChunk();
-                        info = yield parseChunk_1.ParseWave.parseInfoChunk(buff);
+                        info = parseChunk_1.ParseWave.parseInfoChunk(buff);
                     }
                 }
             }

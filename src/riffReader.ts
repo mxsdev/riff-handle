@@ -2,6 +2,7 @@ import { ChunkMeta } from "./types/chunks"
 import { RIFFMeta } from "./types/riff"
 import { ChunkReader } from "./chunkReader"
 import { parseChunkHeader } from "./parseChunk"
+import { WaveData } from "./types/data";
 
 /**
  * Abstraction of fs.FileHandle
@@ -48,10 +49,11 @@ export class RIFFReader {
      * @param size 
      * @param start 
      */
-    constructor(handle: BufferHandle, size: number, start: number = 0) {
+    constructor(handle: BufferHandle, size: number, start: number = 0, initialized: boolean = false) {
         this.pos = start
         this.handle = handle
         this.size = size
+        this.initialized = initialized
     }
 
     async init(): Promise<RIFFMeta> {
@@ -97,23 +99,23 @@ export class RIFFReader {
         this.pos += by
     }
 
-    private async _read(buffer: Buffer, num_bytes: number, advance: boolean = false): Promise<number> {
+    private async _read(buffer: Buffer, num_bytes: number, advance: boolean = false, offset: number = 0): Promise<number> {
         if(this.remaining() < num_bytes) {
             throw new RIFFFileEOLError('Attempted to read beyond end of line')
         }
 
-        const { bytesRead } = await this.handle.read(buffer, 0, num_bytes, this.pos)
+        const { bytesRead } = await this.handle.read(buffer, 0, num_bytes, this.pos + offset)
         if(advance) this.advance(num_bytes)
 
         return bytesRead
     }
 
-    private async read(num_bytes: number, advance: boolean = true, force: boolean = false): Promise<Buffer> {
+    private async read(num_bytes: number, advance: boolean = true, force: boolean = false, offset: number = 0): Promise<Buffer> {
         if(!force && !this.initialized) throw new Error('Cannot read from riff file without running init()!')
 
         const buffer = Buffer.alloc(num_bytes)
 
-        const res = await this._read(buffer, num_bytes, advance)
+        const res = await this._read(buffer, num_bytes, advance, offset)
 
         return buffer
     }
@@ -184,5 +186,34 @@ export class RIFFReader {
 
     private discardCurrentChunk() {
         this.chunk = null
+    }
+
+    async isSampleDataChunk(): Promise<'data'|'list'|false> {
+        if(!this.chunkLoaded()) return false
+        
+        const isDataChunk = (this.chunk!)[0] === 'data'
+        if(isDataChunk) return 'data'
+
+        const meta = await this.getChunkMeta()
+        if(meta.type === 'list' && meta.list_type === 'wavl') return 'list'
+
+        return false
+    }
+
+    async getSampleRange(position: number, length: number, sampleSize: number): Promise<WaveData> {
+        const sampleChunkType = await this.isSampleDataChunk()
+        if(!sampleChunkType) throw new Error('Sample data chunk not active!')
+        
+        const res: WaveData = [ ]
+
+        if(sampleChunkType === 'data') {
+            const buff = await this.read(length*sampleSize, false, false, position*sampleSize)
+            res.push({ type: 'data', data: buff })
+        } else if(sampleChunkType === 'list') {
+            // TODO: implement list data type
+            throw new Error('WAVE data format unsupported')
+        }
+
+        return res
     }
 }

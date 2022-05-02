@@ -46,12 +46,11 @@ export async function getWaveMeta(handle: BufferHandle, size: number): Promise<W
                     adtl = ParseWave.ADTL.parseWaveADTLChunk(buff)
                 }else if(meta.list_type === 'INFO') {
                     const buff = await riffReader.readCurrentChunk()
-                    info = await ParseWave.parseInfoChunk(buff)
+                    info = ParseWave.parseInfoChunk(buff)
                 }
                 
             }
         }
-
         if(riffReader.chunkLoaded()) riffReader.skipCurrentChunk()
     }
 
