@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChunkWriter = exports.RIFFWriter = exports.WaveWriter = exports.parseChunkHeader = exports.ParseWave = exports.RIFFReader = exports.ChunkReader = exports.getSampleRange = exports.getWaveMeta = void 0;
+exports.ChunkWriter = exports.RIFFWriter = exports.WaveWriter = exports.parseChunkHeader = exports.ParseWave = exports.RIFFReader = exports.ChunkReader = exports.getWaveSampleRange = exports.getWaveMeta = void 0;
 var metadata_1 = require("./metadata");
 Object.defineProperty(exports, "getWaveMeta", { enumerable: true, get: function () { return metadata_1.getWaveMeta; } });
 var samples_1 = require("./samples");
-Object.defineProperty(exports, "getSampleRange", { enumerable: true, get: function () { return samples_1.getSampleRange; } });
+Object.defineProperty(exports, "getWaveSampleRange", { enumerable: true, get: function () { return samples_1.getWaveSampleRange; } });
 var chunkReader_1 = require("./chunkReader");
 Object.defineProperty(exports, "ChunkReader", { enumerable: true, get: function () { return chunkReader_1.ChunkReader; } });
 var riffReader_1 = require("./riffReader");

@@ -1,5 +1,5 @@
 export { getWaveMeta } from './metadata';
-export { getSampleRange } from './samples';
+export { getWaveSampleRange } from './samples';
 export { ChunkReader } from './chunkReader';
 export { RIFFReader } from './riffReader';
 export { ParseWave, parseChunkHeader } from './parseChunk';

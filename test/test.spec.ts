@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import fs from 'fs/promises'
 import path from 'path'
-import { RIFFReader, getWaveMeta, getSampleRange, WaveWriter } from '../dist/index'
+import { RIFFReader, getWaveMeta, getWaveSampleRange, WaveWriter } from '../dist/index'
 import { test_wave_meta } from './snapshot'
 
 const test_wav = path.join(__dirname, 'files', 'test.wav')
@@ -60,7 +60,7 @@ describe('getSampleRange', () => {
         if(!cue || len?.type !== 'ltxt') throw new Error('cue point not found')
 
         // @ts-ignore
-        const buff = await getSampleRange(handle, size, cue.position, len.sampleLength)
+        const buff = await getWaveSampleRange(handle, size, cue.position, len.sampleLength)
 
         const wave = new WaveWriter(meta.fmt, meta.fact, buff).setTag('ICMT', 'This is a test comment.')
 

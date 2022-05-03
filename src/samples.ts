@@ -2,7 +2,7 @@ import { ParseWave } from "./parseChunk";
 import { BufferHandle, RIFFReader } from "./riffReader";
 import { WaveData } from "./types/data";
 
-export async function getSampleRange(handle: BufferHandle, size: number, position: number, length: number) {
+export async function getWaveSampleRange(handle: BufferHandle, size: number, position: number, length: number) {
     const reader = new RIFFReader(handle, size)
     await reader.init()
 

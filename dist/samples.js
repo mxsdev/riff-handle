@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSampleRange = void 0;
+exports.getWaveSampleRange = void 0;
 const parseChunk_1 = require("./parseChunk");
 const riffReader_1 = require("./riffReader");
-function getSampleRange(handle, size, position, length) {
+function getWaveSampleRange(handle, size, position, length) {
     return __awaiter(this, void 0, void 0, function* () {
         const reader = new riffReader_1.RIFFReader(handle, size);
         yield reader.init();
@@ -35,7 +35,7 @@ function getSampleRange(handle, size, position, length) {
         throw new Error('Wave file has no data');
     });
 }
-exports.getSampleRange = getSampleRange;
+exports.getWaveSampleRange = getWaveSampleRange;
 function waveDataToBuffer(data, sampleSize) {
     if (data.length === 1 && data[0].type === 'data')
         return data[0].data;
