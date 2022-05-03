@@ -1,24 +1,27 @@
 import { ParseWave } from "./parseChunk";
 import { BufferHandle, RIFFReader } from "./riffReader";
+import { WaveFormat } from "./types/chunks";
 import { WaveData } from "./types/data";
 
-export async function getWaveSampleRange(handle: BufferHandle, size: number, position: number, length: number) {
+export async function getWaveSampleRange(handle: BufferHandle, size: number, position: number, length: number): Promise<{fmt: WaveFormat, data: Buffer}> {
     const reader = new RIFFReader(handle, size)
     await reader.init()
 
-    let sampleSize: number|null = null
+    let fmt: WaveFormat|null = null
 
     while(!reader.eol()) {
         const [ckID] = await reader.nextChunk()
 
         if(ckID === 'fmt ') {
-            const { blockAlign } = ParseWave.parseFormatChunk(await reader.readCurrentChunk())
-            
-            sampleSize = blockAlign
+            fmt = ParseWave.parseFormatChunk(await reader.readCurrentChunk())
         } else if(await reader.isSampleDataChunk()) {
-            if(sampleSize == null) throw new Error('Invalid WAVE File - Does not include fmt chunk before data chunk!')
+            if(fmt == null) throw new Error('Invalid WAVE File - Does not include fmt chunk before data chunk!')
 
-            return waveDataToBuffer(await reader.getSampleRange(position, length, sampleSize), sampleSize)
+            const { blockAlign: sampleSize } = fmt
+
+            const data = waveDataToBuffer(await reader.getSampleRange(position, length, sampleSize), sampleSize)
+
+            return { fmt, data }
         } else {
             await reader.skipCurrentChunk()
         }

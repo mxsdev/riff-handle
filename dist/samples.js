@@ -16,17 +16,18 @@ function getWaveSampleRange(handle, size, position, length) {
     return __awaiter(this, void 0, void 0, function* () {
         const reader = new riffReader_1.RIFFReader(handle, size);
         yield reader.init();
-        let sampleSize = null;
+        let fmt = null;
         while (!reader.eol()) {
             const [ckID] = yield reader.nextChunk();
             if (ckID === 'fmt ') {
-                const { blockAlign } = parseChunk_1.ParseWave.parseFormatChunk(yield reader.readCurrentChunk());
-                sampleSize = blockAlign;
+                fmt = parseChunk_1.ParseWave.parseFormatChunk(yield reader.readCurrentChunk());
             }
             else if (yield reader.isSampleDataChunk()) {
-                if (sampleSize == null)
+                if (fmt == null)
                     throw new Error('Invalid WAVE File - Does not include fmt chunk before data chunk!');
-                return waveDataToBuffer(yield reader.getSampleRange(position, length, sampleSize), sampleSize);
+                const { blockAlign: sampleSize } = fmt;
+                const data = waveDataToBuffer(yield reader.getSampleRange(position, length, sampleSize), sampleSize);
+                return { fmt, data };
             }
             else {
                 yield reader.skipCurrentChunk();

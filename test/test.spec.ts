@@ -60,7 +60,7 @@ describe('getSampleRange', () => {
         if(!cue || len?.type !== 'ltxt') throw new Error('cue point not found')
 
         // @ts-ignore
-        const buff = await getWaveSampleRange(handle, size, cue.position, len.sampleLength)
+        const { data: buff } = await getWaveSampleRange(handle, size, cue.position, len.sampleLength)
 
         const wave = new WaveWriter(meta.fmt, meta.fact, buff).setTag('ICMT', 'This is a test comment.')
 
