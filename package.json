@@ -1,5 +1,5 @@
 {
-  "name": "riff-data",
+  "name": "riff-handle",
   "version": "0.0.1",
   "description": "Selectively parse riff data from a file handle",
   "main": "./dist/index.js",
