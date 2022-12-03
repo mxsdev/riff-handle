@@ -1,6 +1,6 @@
 # riff-handle
 
-An parser for the [RIFF specification][riff] specification.
+An parser for the [RIFF specification][riff].
 
 Instead of parsing the whole file at once, it reads from a file handle. This allows for the determination of, for example, meta information about an audio file without having to load any sample data into memory.
 
